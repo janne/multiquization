@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multiquization/game.dart';
 
 import 'home.dart';
 
@@ -13,6 +14,7 @@ class MainApp extends StatelessWidget {
   final _router = GoRouter(
     routes: [
       GoRoute(path: "/", builder: (context, state) => const Home()),
+      GoRoute(path: "/game", builder: (context, state) => const Game()),
     ],
   );
 
