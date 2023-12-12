@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,20 +16,29 @@ class _GameState extends State<Game> {
   var time = "00:00";
   var startTime = DateTime.now();
   Timer? timer;
-  var multiplier = 3;
-  var multiplicand = 5;
+  var multiplier = 0;
+  var multiplicand = 0;
   var score = 0;
-  int? guess;
+  int? previousGuess;
+  final random = Random();
 
   @override
   void initState() {
     super.initState();
+    _randomize();
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       final duration = DateTime.now().difference(startTime);
       _updateTime(duration);
-      if (duration > const Duration(seconds: 181)) {
+      if (duration > const Duration(seconds: 61)) {
         context.pop(score);
       }
+    });
+  }
+
+  _randomize() {
+    setState(() {
+      multiplier = random.nextInt(10);
+      multiplicand = random.nextInt(10);
     });
   }
 
@@ -44,8 +54,23 @@ class _GameState extends State<Game> {
     super.dispose();
   }
 
-  void _onGuess(int? i) {
-    setState(() => guess = i);
+  void _onGuess(int? guess) {
+    final product = multiplier * multiplicand;
+    if (guess == product) {
+      _randomize();
+      setState(() {
+        score += 1;
+        previousGuess = null;
+      });
+    } else if (guess == null || product.toString().indexOf(guess.toString()) == 0) {
+      setState(() => previousGuess = guess);
+    } else {
+      _randomize();
+      setState(() {
+        score -= 1;
+        previousGuess = null;
+      });
+    }
   }
 
   @override
@@ -57,8 +82,9 @@ class _GameState extends State<Game> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(time, style: Theme.of(context).textTheme.headlineSmall),
+            Text("Score: $score", style: Theme.of(context).textTheme.headlineSmall),
             Text("$multiplier ✖ $multiplicand", style: Theme.of(context).textTheme.displayMedium),
-            Keyboard(guess: guess, onPress: _onGuess)
+            Keyboard(guess: previousGuess, onPress: _onGuess)
           ],
         ),
       ),
