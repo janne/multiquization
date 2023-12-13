@@ -43,12 +43,19 @@ class _GameState extends State<Game> {
 
   _randomize() {
     setState(() {
-      if (widget.level == 1) {
-        multiplier = random.nextInt(11);
-        multiplicand = random.nextInt(11);
-      } else {
-        multiplier = random.nextInt(5) + 5;
-        multiplicand = random.nextInt(5) + 5;
+      switch (widget.level) {
+        case 1:
+          multiplier = random.nextInt(5);
+          multiplicand = random.nextInt(5);
+          break;
+        case 2:
+          multiplier = random.nextInt(11);
+          multiplicand = random.nextInt(11);
+          break;
+        case 3:
+          multiplier = random.nextInt(5) + 5;
+          multiplicand = random.nextInt(5) + 5;
+          break;
       }
     });
   }
@@ -90,16 +97,22 @@ class _GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(time, style: Theme.of(context).textTheme.headlineSmall),
-            Text("Score: $score", style: Theme.of(context).textTheme.headlineSmall),
-            Text("$multiplier ✖ $multiplicand", style: Theme.of(context).textTheme.displayMedium),
-            Keyboard(guess: previousGuess, onPress: _onGuess)
-          ],
+      appBar: AppBar(title: Text("Level ${widget.level}")),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Text(time, style: Theme.of(context).textTheme.headlineSmall),
+                  Text(score.toString(), style: Theme.of(context).textTheme.headlineSmall),
+                ],
+              ),
+              Text("$multiplier ✖ $multiplicand", style: Theme.of(context).textTheme.displayMedium),
+              Keyboard(guess: previousGuess, onPress: _onGuess)
+            ],
+          ),
         ),
       ),
     );

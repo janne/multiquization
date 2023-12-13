@@ -11,10 +11,13 @@ class LevelButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      child: Row(children: [
-        Icon(Icons.play_circle_fill, size: 64, color: color),
-        Text(label, style: Theme.of(context).textTheme.headlineMedium),
-      ]),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.play_circle_fill, size: 64, color: color),
+          Text(label, style: Theme.of(context).textTheme.headlineMedium),
+        ],
+      ),
     );
   }
 }

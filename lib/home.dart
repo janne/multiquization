@@ -13,53 +13,41 @@ class _HomeState extends State<Home> {
   int? lastScore;
   int? highScore;
 
+  void _startGame(int level) async {
+    final score = await context.push<int>("/game", extra: level);
+    if (score != null) {
+      setState(() {
+        lastScore = score;
+        highScore = highScore == null || score > highScore! ? score : highScore;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text("Multiquization")),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          lastScore != null
-              ? Padding(
+          if (highScore != null || lastScore != null)
+            Column(children: [
+              if (lastScore != null)
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Center(child: Text("Senaste spelet: $lastScore", style: const TextStyle(fontSize: 24))),
-                )
-              : Container(),
-          highScore != null
-              ? Padding(
+                  child: Center(child: Text("Last game: $lastScore", style: const TextStyle(fontSize: 24))),
+                ),
+              if (highScore != null)
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Center(child: Text("Bäst hitills: $highScore", style: const TextStyle(fontSize: 24))),
+                  child: Center(child: Text("High score: $highScore", style: const TextStyle(fontSize: 24))),
                 )
-              : Container(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            ]),
+          Column(
             children: [
-              LevelButton(
-                onPressed: () async {
-                  final score = await context.push<int>("/game", extra: 1);
-                  setState(() {
-                    if (score != null) {
-                      lastScore = score;
-                      highScore = highScore == null || score > highScore! ? score : highScore;
-                    }
-                  });
-                },
-                color: Colors.blue,
-                label: 'Level 1',
-              ),
-              LevelButton(
-                onPressed: () async {
-                  final score = await context.push<int>("/game", extra: 2);
-                  setState(() {
-                    if (score != null) {
-                      lastScore = score;
-                      highScore = highScore == null || score > highScore! ? score : highScore;
-                    }
-                  });
-                },
-                color: Colors.red,
-                label: 'Level 2',
-              )
+              LevelButton(onPressed: () => _startGame(1), color: Colors.blue[100]!, label: 'Level 1'),
+              LevelButton(onPressed: () => _startGame(2), color: Colors.blue, label: 'Level 2'),
+              LevelButton(onPressed: () => _startGame(3), color: Colors.blue[900]!, label: 'Level 3'),
             ],
           ),
         ],
